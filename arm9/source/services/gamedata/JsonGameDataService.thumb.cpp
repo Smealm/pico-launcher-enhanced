@@ -17,6 +17,7 @@
 #define KEY_GAME_CODE         "gameCode"
 #define KEY_FAVORITE          "favorite"
 #define KEY_COMPLETED         "completed"
+#define KEY_COUNT_STATS       "countStats"
 #define KEY_LAUNCH_COUNT      "launchCount"
 #define KEY_PLAY_MINUTES      "playMinutes"
 #define KEY_LAST_PLAYED       "lastPlayed"
@@ -229,6 +230,11 @@ void JsonGameDataService::RecordLaunch(const char* fileName, const char* gameCod
     auto* entry = GetOrCreateEntry(fileName, gameCode);
     if (!entry)
         return;
+    // countStats: false keeps the file out of the statistics. Checked here so
+    // no launch path can record one, and no play session is opened for
+    // CloseOpenSession to credit later.
+    if (!entry->countStats)
+        return;
     entry->launchCount++;
     entry->lastPlayed = lastPlayedDateTime;
     entry->path = fullPath;
@@ -271,7 +277,12 @@ bool JsonGameDataService::CloseOpenSession(const char* nowDateTime)
             // launch there is nothing to credit and the minutes are dropped
             // rather than invented onto a new entry
             if (auto* entry = Find(_sessionGameFileName.GetString()))
-                entry->playMinutes += (u32)minutes;
+            {
+                // the file may have been marked countStats: false after it was
+                // launched; the session still closes, it just credits nothing
+                if (entry->countStats)
+                    entry->playMinutes += (u32)minutes;
+            }
         }
     }
     ClearSession();
@@ -327,9 +338,11 @@ void JsonGameDataService::SaveAsync(TaskQueueBase* ioTaskQueue)
         const auto& entry = _entries[i];
         // entries reset back to all-default state are pruned on write; the
         // edited name/credits count as data, so an entry the user renamed is
-        // kept even though it was never played
-        if (!entry.favorite && !entry.completed && entry.launchCount == 0 &&
-            entry.playMinutes == 0 && !entry.HasDisplayMetadata())
+        // kept even though it was never played, and an entry marked
+        // countStats: false is kept with nothing else set
+        if (entry.countStats && !entry.favorite && !entry.completed &&
+            entry.launchCount == 0 && entry.playMinutes == 0 &&
+            !entry.HasDisplayMetadata())
             continue;
         auto game = games[entry.fileName.GetString()].to<JsonObject>();
         if (entry.gameCode.GetString()[0] != 0)
@@ -344,6 +357,8 @@ void JsonGameDataService::SaveAsync(TaskQueueBase* ioTaskQueue)
             game[KEY_FAVORITE] = true;
         if (entry.completed)
             game[KEY_COMPLETED] = true;
+        if (!entry.countStats)
+            game[KEY_COUNT_STATS] = false;
         if (entry.launchCount > 0)
             game[KEY_LAUNCH_COUNT] = entry.launchCount;
         if (entry.playMinutes > 0)
@@ -502,6 +517,7 @@ void JsonGameDataService::Load()
         entry->developer = item.value()[KEY_DEVELOPER] | "";
         entry->favorite = item.value()[KEY_FAVORITE] | false;
         entry->completed = item.value()[KEY_COMPLETED] | false;
+        entry->countStats = item.value()[KEY_COUNT_STATS] | true;
         entry->launchCount = item.value()[KEY_LAUNCH_COUNT] | 0u;
         entry->playMinutes = item.value()[KEY_PLAY_MINUTES] | 0u;
         entry->lastPlayed = item.value()[KEY_LAST_PLAYED] | "";
