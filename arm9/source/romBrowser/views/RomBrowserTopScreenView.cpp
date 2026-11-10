@@ -147,12 +147,14 @@ void RomBrowserTopScreenView::Update()
             else if (gameTitle && gameTitle[0] != 0)
             {
                 _fileInfoView->SetGameTitleAsync(_viewModel->GetBgTaskQueue(), gameTitle);
+                fileNameAsTitle = false;
             }
             else if (item.GetFileType()->GetClassification() == FileTypeClassification::Game)
             {
                 char16_t title[128];
                 BuildRomTitle(title, sizeof(title) / sizeof(title[0]), item.GetFileName());
                 _fileInfoView->SetGameTitleAsync(_viewModel->GetBgTaskQueue(), title);
+                fileNameAsTitle = false;
             }
             else
             {
