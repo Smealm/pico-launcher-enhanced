@@ -272,14 +272,16 @@ void RomBrowserController::HideGameInfo()
 
 bool RomBrowserController::CanEditSelected() const
 {
+    if (IsBlocked(ParentalFeature::GameInfo))
+        return false;
     return GetSelectedGame() != nullptr;
 }
 
 void RomBrowserController::ShowGameInfoEdit()
 {
-    const FileInfo* game = GetSelectedGame();
-    if (!game)
+    if (!CanEditSelected())
         return;
+    const FileInfo* game = GetSelectedGame();
     _triggerFileInfo = FileInfo(*game);
     _stateMachine.Fire(RomBrowserStateTrigger::ShowGameInfoEdit);
 }

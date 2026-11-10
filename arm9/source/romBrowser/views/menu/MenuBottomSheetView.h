@@ -87,7 +87,8 @@ private:
 /// panel replaces this sheet with it; a filter closes the sheet through the
 /// display mode change it triggers; New save launches the highlighted game.
 /// Delete is faded while a folder is highlighted or parental controls block it,
-/// and Game info while a folder is highlighted. New save is only there for a DS
+/// and Game info while a folder is highlighted or parental controls block it.
+/// New save is only there for a DS
 /// game and is faded when all its saves are taken or save slots are blocked. A
 /// small button at the right of the title opens the about sheet.
 class MenuBottomSheetView : public BottomSheetView, public IMenuItemHost
