@@ -32,6 +32,11 @@ The small button at the right of the menu's title opens the **about** sheet: Pic
 ## Game titles
 A game whose header carries no title is shown by its file name, with the extension and the tags of a no-intro, GoodTools or romhack set taken off: `Pokemon - Emerald Version (USA, Europe)` reads as `Pokemon - Emerald Version`, and `Pokemon - Unbound (v2.1.1) (Hack)` reads as `Pokemon - Unbound`. An article that no-intro appends to the end is put back in front, so `Legend of Zelda, The - Link's Awakening` reads as `The Legend of Zelda - Link's Awakening`. A name is only cleaned when everything after its title is such a group, so `Mario (Classic)` keeps its parentheses; a name with no tags is shown without its extension. A rom whose header carries a title, like an NDS game, keeps showing that title exactly as before. Only the title line is involved: folders and other files keep their name as it is. There is no switch for this.
 
+## Game publishers
+A GBA, Game Boy, Game Boy Color, NES or SNES game now reads its publisher from the cartridge header: the maker code on GBA, the licensee code on Game Boy, the developer ID or expanded maker code on SNES, and the optional Nintendo header on NES. Only codes with a known company are named, so a game from a small publisher names none, and many NES games carry no Nintendo header at all. The browser shows the publisher on the second line, under the game's title; the title line itself is unchanged. A publisher set in **Game info** takes its place.
+
+Game Boy and Game Boy Color roms are read when they are opened through a file association for `.gb` or `.gbc`, NES through `.nes`, and SNES through `.sfc` or `.smc`; they already needed an association to be listed at all.
+
 ## Parental controls
 
 **Parental controls** is a full-width entry at the bottom of the menu. The first time it is opened it asks for a PIN of four to eight digits, entered on the number page of the on-screen keyboard, then asks for the same PIN again; if the two do not match, nothing is saved and the first step starts over. After that the entry asks for the PIN whenever the lock is on, and opens the settings once it is correct.

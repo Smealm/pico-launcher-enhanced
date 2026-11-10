@@ -173,6 +173,14 @@ void RomBrowserTopScreenView::Update()
             // the file's own name keeps its place under the title, whatever
             // the title above it shows
             _fileInfoView->SetFileNameAsync(_viewModel->GetBgTaskQueue(), item.GetFileName(), fileNameAsTitle);
+            if (fileNameAsTitle)
+            {
+                const char16_t* publisher = info ? info->GetPublisher() : nullptr;
+                if (publisher && publisher[0] != 0)
+                {
+                    _fileInfoView->SetPublisherAsync(_viewModel->GetBgTaskQueue(), publisher);
+                }
+            }
             if (entry)
             {
                 _fileInfoView->SetCredits(entry->publisher.GetString(),
