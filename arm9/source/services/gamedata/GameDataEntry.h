@@ -36,6 +36,12 @@ struct GameDataEntry
     bool favorite = false;
     /// @brief Marked as finished by the user (long-press X in the browser).
     bool completed = false;
+    /// @brief Whether this file's launches count towards the statistics. False
+    ///        keeps it out of the launch counts, play time, last played date,
+    ///        recents list and the most-launched star, while favorites and
+    ///        completed marks keep working. Hand-edited in gamedata.json; the
+    ///        launcher never sets it back to true itself.
+    bool countStats = true;
     /// @brief The save slot the game was started on last time, which the save
     ///        picker opens on (see RomBrowserController::LaunchFile).
     ///        0 is the regular .sav, 1 to IGameDataService::kMaxSaveSlot use
