@@ -73,7 +73,6 @@ public:
             _lines = 2;
         SetSecondLineAsync(taskQueue, publisher);
     }
-    }
 
     void SetIcon(std::unique_ptr<FileIcon> icon)
     {

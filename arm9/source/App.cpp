@@ -648,6 +648,11 @@ void App::HandleShowParentalControlsTrigger()
 }
 
 void App::HandleHideParentalControlsTrigger()
+{
+    _dialogPresenter.CloseDialog();
+    if (!_dialogPresenter.GetOldFocus())
+        _romBrowserBottomScreenView->Focus(_focusManager);
+}
 
 void App::HandleShowExitComboTrigger()
 {
