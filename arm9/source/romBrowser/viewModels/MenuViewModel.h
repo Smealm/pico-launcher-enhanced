@@ -39,6 +39,7 @@ public:
     void ShowAbout() { _romBrowserController->ShowAbout(); }
     void ShowGameInfoEdit() { _romBrowserController->ShowGameInfoEdit(); }
     bool CanEditSelected() const { return _romBrowserController->CanEditSelected(); }
+    void ShowParentalControls() { _romBrowserController->ShowParentalControls(); }
 
     void Close() { _romBrowserController->HideMenu(); }
 

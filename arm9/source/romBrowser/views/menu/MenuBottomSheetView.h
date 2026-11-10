@@ -82,14 +82,14 @@ private:
 ///        hold as icons, and behind long presses, written out.
 ///
 /// Recently played, favorites, statistics and delete in two columns, Game info
-/// as a full row, New save as a full row that names the save it would start,
-/// then the two filters side by side, in their color while on. Picking a panel
-/// replaces this sheet with it; a filter closes the sheet through the display
-/// mode change it triggers; New save launches the highlighted game. Delete and
-/// Game info are faded while a folder is highlighted. New save is only there for
-/// a DS game, the filters moving up into its row otherwise, and is faded when
-/// all its saves are taken. A small button at the right of the title opens the
-/// about sheet.
+/// and New save sharing the next row, then the two filters side by side, in
+/// their color while on, and Parental controls as the last full row. Picking a
+/// panel replaces this sheet with it; a filter closes the sheet through the
+/// display mode change it triggers; New save launches the highlighted game.
+/// Delete is faded while a folder is highlighted or parental controls block it,
+/// and Game info while a folder is highlighted. New save is only there for a DS
+/// game and is faded when all its saves are taken or save slots are blocked. A
+/// small button at the right of the title opens the about sheet.
 class MenuBottomSheetView : public BottomSheetView, public IMenuItemHost
 {
     SHARED_ONLY(MenuBottomSheetView)
@@ -122,6 +122,7 @@ private:
         ITEM_NEW_SAVE,
         ITEM_FAVORITES_FILTER,
         ITEM_COMPLETED_FILTER,
+        ITEM_PARENTAL_CONTROLS,
         ITEM_COUNT
     };
 
@@ -138,7 +139,7 @@ private:
         const MaterialColorScheme* materialColorScheme, const IFontRepository* fontRepository);
 
     u32 LoadSprite(IVramManager& vramManager, const unsigned int* tiles, u32 tilesLength) const;
-    /// @brief The row an entry sits on: the ones under New save move up when it isn't shown.
+    /// @brief The row an entry sits on.
     int GetRow(int index) const;
     /// @brief The shown entry of a row in a column, or -1 when there is none. A full row
     ///        answers for either column, and a row of cells answers for a full row with its

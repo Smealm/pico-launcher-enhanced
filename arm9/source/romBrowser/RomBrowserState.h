@@ -16,5 +16,6 @@ enum class RomBrowserState
     DeleteConfirm,
     Menu,
     About,
+    ParentalControls,
     SavePicker
 };

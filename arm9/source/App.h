@@ -165,6 +165,8 @@ private:
     void HandleHideMenuTrigger();
     void HandleShowAboutTrigger();
     void HandleHideAboutTrigger();
+    void HandleShowParentalControlsTrigger();
+    void HandleHideParentalControlsTrigger();
     void HandleShowSavePickerTrigger();
     void HandleHideSavePickerTrigger();
     void CloseSheetIfLeavingMenu();

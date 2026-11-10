@@ -21,6 +21,7 @@
 #include "heartIcon.h"
 #include "checkIcon.h"
 #include "infoIcon.h"
+#include "settingsIcon.h"
 #include "MenuBottomSheetView.h"
 
 // Placed from the sheet's top edge, which rests at y 32 once the sheet is open.
@@ -33,12 +34,13 @@
 #define ABOUT_BUTTON_Y      (TITLE_Y - 7)
 
 // Two cells per row over the 224 px the recents list uses, or one full row.
-// Rows sit 24 apart so the 24 px items keep a hairline between them; the
-// filters share the last row, and New save can add one before it.
+// Rows sit 24 apart so five 24 px items fit inside the sheet; Game info and
+// New save share a row, the filters share one, and Parental controls gets the
+// last full row.
 #define ITEMS_X             16
 #define CELL_WIDTH          112
 #define ROW_WIDTH           224
-#define ROWS_Y              32
+#define ROWS_Y              34
 #define ROW_SPACING         24
 
 // Inside an item.
@@ -47,7 +49,7 @@
 #define ICON_SIZE           16
 #define NAME_DX             26
 #define NAME_DY             4
-#define STATE_WIDTH         40
+#define STATE_WIDTH         34
 #define STATE_DX            (ROW_WIDTH - 4 - STATE_WIDTH)
 #define STATE_DY            7
 
@@ -72,10 +74,11 @@ static constexpr MenuEntry kEntries[] =
     { "Favorites", 0, 1 },
     { "Statistics", 1, 0 },
     { "Delete game", 1, 1 },
-    { "Game info", 2, -1 },
-    { "New save", 3, -1 },
-    { "Only favorites", 4, 0 },
-    { "Only completed", 4, 1 }
+    { "Game info", 2, 0 },
+    { "New save", 2, 1 },
+    { "Only favorites", 3, 0 },
+    { "Only completed", 3, 1 },
+    { "Parental controls", 4, -1 }
 };
 
 MenuItemView::MenuItemView(IMenuItemHost* sheet, int index, int width, const char* name,
@@ -251,10 +254,10 @@ void MenuBottomSheetView::InitVram(const VramContext& vramContext)
     // catch an entry added to the enum without its icon.
     static const unsigned int* const kTiles[] =
         { recentIconTiles, smallHeartIconFilledTiles, statsIconTiles, trashIconTiles,
-          infoIconTiles, plusIconTiles, heartIconTiles, checkIconTiles };
+          infoIconTiles, plusIconTiles, heartIconTiles, checkIconTiles, settingsIconTiles };
     static const u32 kTilesLength[] =
         { recentIconTilesLen, smallHeartIconFilledTilesLen, statsIconTilesLen, trashIconTilesLen,
-          infoIconTilesLen, plusIconTilesLen, heartIconTilesLen, checkIconTilesLen };
+          infoIconTilesLen, plusIconTilesLen, heartIconTilesLen, checkIconTilesLen, settingsIconTilesLen };
     static_assert(std::size(kTiles) == ITEM_COUNT, "one icon per item");
     static_assert(std::size(kTilesLength) == ITEM_COUNT, "one icon length per item");
     _aboutButton->SetIconVramOffset(LoadSprite(*objVramManager, infoIconTiles, infoIconTilesLen));
@@ -275,8 +278,8 @@ u32 MenuBottomSheetView::LoadSprite(IVramManager& vramManager, const unsigned in
 
 int MenuBottomSheetView::GetRow(int index) const
 {
-    int row = kEntries[index].row;
-    return !_newSaveShown && row > kEntries[ITEM_NEW_SAVE].row ? row - 1 : row;
+    // New save shares Game info's row, so hiding it leaves the rows below put.
+    return kEntries[index].row;
 }
 
 int MenuBottomSheetView::FindEntry(int row, int column) const
@@ -413,6 +416,9 @@ void MenuBottomSheetView::Activate(int index)
             break;
         case ITEM_COMPLETED_FILTER:
             _viewModel->ToggleCompletedFilter();
+            break;
+        case ITEM_PARENTAL_CONTROLS:
+            _viewModel->ShowParentalControls();
             break;
     }
 }
