@@ -23,6 +23,11 @@ public:
     bool launchTracking = true;
     /// @brief PIN and per-feature permissions; see ParentalControls.
     ParentalControls parentalControls;
+    /// @brief Keys held to exit a DS game, as names ("Select+L+R+Right").
+    ///        Empty means the loader's own default. The combo only reaches a
+    ///        loader that reports API version 4; older ones keep the combo
+    ///        they were built with.
+    String<char, 32> loaderExitCombo = "";
     RomBrowserDisplaySettings romBrowserDisplaySettings;
 
     std::unique_ptr<FileAssociation[]> fileAssociations;

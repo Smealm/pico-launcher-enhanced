@@ -17,5 +17,6 @@ enum class RomBrowserState
     Menu,
     About,
     ParentalControls,
-    SavePicker
+    SavePicker,
+    ExitCombo
 };

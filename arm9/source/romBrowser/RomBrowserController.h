@@ -72,6 +72,10 @@ public:
     {
         return !_appSettingsService->GetAppSettings().parentalControls.Allows(feature);
     }
+    void ShowExitCombo() override;
+    void HideExitCombo() override;
+    u16 GetLoaderExitCombo() const override;
+    void SetLoaderExitCombo(u16 combo) override;
     bool CanDeleteSelected() const override;
     void RequestDeleteSelected() override;
     void CancelDelete() override;

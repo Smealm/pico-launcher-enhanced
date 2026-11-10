@@ -169,6 +169,8 @@ private:
     void HandleHideParentalControlsTrigger();
     void HandleShowSavePickerTrigger();
     void HandleHideSavePickerTrigger();
+    void HandleShowExitComboTrigger();
+    void HandleHideExitComboTrigger();
     void CloseSheetIfLeavingMenu();
     void HandleNavigateTrigger();
     void HandleFolderLoadDoneTrigger();

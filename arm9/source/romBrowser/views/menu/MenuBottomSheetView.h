@@ -82,8 +82,8 @@ private:
 ///        hold as icons, and behind long presses, written out.
 ///
 /// Recently played, favorites, statistics and delete in two columns, Game info
-/// and New save sharing the next row, then the two filters side by side, in
-/// their color while on, and Parental controls as the last full row. Picking a
+/// and New save sharing the next row, Quit combo beside Only favorites, then
+/// Only completed and Parental controls, all in their color while on. Picking a
 /// panel replaces this sheet with it; a filter closes the sheet through the
 /// display mode change it triggers; New save launches the highlighted game.
 /// Delete is faded while a folder is highlighted or parental controls block it,
@@ -120,6 +120,7 @@ private:
         ITEM_DELETE,
         ITEM_GAME_INFO,
         ITEM_NEW_SAVE,
+        ITEM_EXIT_COMBO,
         ITEM_FAVORITES_FILTER,
         ITEM_COMPLETED_FILTER,
         ITEM_PARENTAL_CONTROLS,

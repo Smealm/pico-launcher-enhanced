@@ -29,14 +29,15 @@
 #define TITLE_Y             16
 
 // The about button shares the title row, where the display settings sheet
-// keeps its theme button.
+// keeps its theme button. The exit combo is an entry in the grid now, so the
+// title row has the one button again.
 #define ABOUT_BUTTON_X      212
 #define ABOUT_BUTTON_Y      (TITLE_Y - 7)
 
 // Two cells per row over the 224 px the recents list uses, or one full row.
-// Rows sit 24 apart so five 24 px items fit inside the sheet; Game info and
-// New save share a row, the filters share one, and Parental controls gets the
-// last full row.
+// Rows sit 24 apart so five 24 px items fit inside the sheet. The ten entries
+// share five rows: the panels, Game info with New save, Quit combo with Only
+// favorites, then Only completed with Parental controls.
 #define ITEMS_X             16
 #define CELL_WIDTH          112
 #define ROW_WIDTH           224
@@ -76,9 +77,10 @@ static constexpr MenuEntry kEntries[] =
     { "Delete game", 1, 1 },
     { "Game info", 2, 0 },
     { "New save", 2, 1 },
-    { "Only favorites", 3, 0 },
-    { "Only completed", 3, 1 },
-    { "Parental controls", 4, -1 }
+    { "Quit combo", 3, 0 },
+    { "Only favorites", 3, 1 },
+    { "Only completed", 4, 0 },
+    { "Parental controls", 4, 1 }
 };
 
 MenuItemView::MenuItemView(IMenuItemHost* sheet, int index, int width, const char* name,
@@ -254,10 +256,12 @@ void MenuBottomSheetView::InitVram(const VramContext& vramContext)
     // catch an entry added to the enum without its icon.
     static const unsigned int* const kTiles[] =
         { recentIconTiles, smallHeartIconFilledTiles, statsIconTiles, trashIconTiles,
-          infoIconTiles, plusIconTiles, heartIconTiles, checkIconTiles, settingsIconTiles };
+          infoIconTiles, plusIconTiles, settingsIconTiles, heartIconTiles, checkIconTiles,
+          settingsIconTiles };
     static const u32 kTilesLength[] =
         { recentIconTilesLen, smallHeartIconFilledTilesLen, statsIconTilesLen, trashIconTilesLen,
-          infoIconTilesLen, plusIconTilesLen, heartIconTilesLen, checkIconTilesLen, settingsIconTilesLen };
+          infoIconTilesLen, plusIconTilesLen, settingsIconTilesLen, heartIconTilesLen, checkIconTilesLen,
+          settingsIconTilesLen };
     static_assert(std::size(kTiles) == ITEM_COUNT, "one icon per item");
     static_assert(std::size(kTilesLength) == ITEM_COUNT, "one icon length per item");
     _aboutButton->SetIconVramOffset(LoadSprite(*objVramManager, infoIconTiles, infoIconTilesLen));
@@ -410,6 +414,9 @@ void MenuBottomSheetView::Activate(int index)
         case ITEM_NEW_SAVE:
             // faded and inert without a free save: the view model checks
             _viewModel->StartNewSave();
+            break;
+        case ITEM_EXIT_COMBO:
+            _viewModel->ShowExitCombo();
             break;
         case ITEM_FAVORITES_FILTER:
             _viewModel->ToggleFavoritesFilter();

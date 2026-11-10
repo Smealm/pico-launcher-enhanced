@@ -4,6 +4,7 @@
 #include "AppSettings.h"
 #include "fat/File.h"
 #include "JsonAppSettingsSerializer.h"
+#include "KeyCombo.h"
 
 #pragma GCC optimize("Os")
 
@@ -18,6 +19,7 @@
 #define KEY_BACKLIGHT_LEVEL          "backlightLevel"
 #define KEY_SAVE_LOCATION            "saveLocation"
 #define KEY_LAUNCH_TRACKING          "launchTracking"
+#define KEY_LOADER_EXIT_COMBO        "loaderExitCombo"
 #define KEY_RESTRICTED_MODE          "restrictedMode"
 #define KEY_PARENTAL_CONTROLS        "parentalControls"
 #define KEY_PARENTAL_PIN             "parentalPin"
@@ -192,6 +194,9 @@ static std::unique_ptr<u8[]> writeJson(const AppSettings* appSettings, u32& leng
     json[KEY_PARENTAL_ALLOW_BADGES] = appSettings->parentalControls.allowBadges;
     json[KEY_PARENTAL_ALLOW_GAME_INFO] = appSettings->parentalControls.allowGameInfo;
     json[KEY_PARENTAL_SAVE_SANDBOXING] = appSettings->parentalControls.saveSandboxing;
+    // only written once a combo was picked; empty keeps the loader's default
+    if (appSettings->loaderExitCombo.GetString()[0] != 0)
+        json[KEY_LOADER_EXIT_COMBO] = appSettings->loaderExitCombo.GetString();
     serializeFileAssociations(json, appSettings);
 
     u32 outputSize = measureJsonPretty(json);
@@ -290,6 +295,17 @@ static void readJson(AppSettings* appSettings, const JsonDocument& json)
         json.containsKey(KEY_PARENTAL_SAVE_SANDBOXING)
             ? json[KEY_PARENTAL_SAVE_SANDBOXING] | false
             : json[KEY_PARENTAL_KID_SAVES_LEGACY] | false);
+    // An unknown name or a combination the loader would refuse leaves the
+    // default in place rather than making the launcher unlaunchable.
+    u16 loaderExitCombo = 0;
+    if (KeyCombo::TryParse(json[KEY_LOADER_EXIT_COMBO].as<const char*>(), loaderExitCombo) &&
+        loaderExitCombo != 0)
+    {
+        char comboText[KeyCombo::kMaxTextLength];
+        KeyCombo::Format(loaderExitCombo, comboText, sizeof(comboText));
+        appSettings->loaderExitCombo = comboText;
+    }
+
     tryParseFileAssociations(json[KEY_FILE_ASSOCIATIONS], appSettings);
 }
 

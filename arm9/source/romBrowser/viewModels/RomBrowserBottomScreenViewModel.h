@@ -29,6 +29,7 @@ public:
             || state == RomBrowserState::About
             || state == RomBrowserState::ParentalControls
             || state == RomBrowserState::SavePicker
+            || state == RomBrowserState::ExitCombo
             || state == RomBrowserState::Launching
             || state == RomBrowserState::GoingToSettingsScreen;
     }
