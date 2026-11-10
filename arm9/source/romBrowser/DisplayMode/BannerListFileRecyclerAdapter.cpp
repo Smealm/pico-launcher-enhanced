@@ -58,7 +58,7 @@ TaskResult<void> BannerListFileRecyclerAdapter::BindView(SharedPtr<View> view, i
         fileNameAsTitle = false;
     }
     listItemView->SetFileName(fileInfo.GetFileName(), fileNameAsTitle);
-    if (fileNameAsTitle && internalFileInfo)
+    if (internalFileInfo)
     {
         const char16_t* publisher = internalFileInfo->GetPublisher();
         if (publisher && publisher[0] != 0)
