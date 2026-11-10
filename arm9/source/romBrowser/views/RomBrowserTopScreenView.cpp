@@ -10,6 +10,7 @@
 #include "core/mini-printf.h"
 #include "../viewModels/RomBrowserViewModel.h"
 #include "../IRomBrowserController.h"
+#include "../RomInfoText.h"
 #include "services/gamedata/IGameDataService.h"
 #include "gui/GraphicsContext.h"
 #include "gui/IVramManager.h"
@@ -133,8 +134,11 @@ void RomBrowserTopScreenView::Update()
             auto info = fileInfoManager.GetInternalFileInfo(selectedItem);
 
             const auto* entry = _gameDataService->GetEntry(item.GetFileName());
-            bool fileNameAsTitle = true;
+            // The user's title wins, then a title in the header (an NDS banner).
+            // A game without either is shown by its cleaned file name, and
+            // anything else keeps its name as it is, extension included.
             const char16_t* gameTitle = info ? info->GetGameTitle() : nullptr;
+            bool fileNameAsTitle = true;
             if (entry && entry->title.GetString()[0] != 0)
             {
                 _fileInfoView->SetTitleText(entry->title.GetString());
@@ -143,7 +147,16 @@ void RomBrowserTopScreenView::Update()
             else if (gameTitle && gameTitle[0] != 0)
             {
                 _fileInfoView->SetGameTitleAsync(_viewModel->GetBgTaskQueue(), gameTitle);
-                fileNameAsTitle = false;
+            }
+            else if (item.GetFileType()->GetClassification() == FileTypeClassification::Game)
+            {
+                char16_t title[128];
+                BuildRomTitle(title, sizeof(title) / sizeof(title[0]), item.GetFileName());
+                _fileInfoView->SetGameTitleAsync(_viewModel->GetBgTaskQueue(), title);
+            }
+            else
+            {
+                fileNameAsTitle = true;
             }
 
             _selectedFileIcon = info ? info->CreateGameIcon() : nullptr;
@@ -157,6 +170,8 @@ void RomBrowserTopScreenView::Update()
                 _iconGraphicsUploaded = false;
             }
             _fileInfoView->SetIcon(std::move(_selectedFileIcon));
+            // the file's own name keeps its place under the title, whatever
+            // the title above it shows
             _fileInfoView->SetFileNameAsync(_viewModel->GetBgTaskQueue(), item.GetFileName(), fileNameAsTitle);
             if (entry)
             {
